@@ -11,40 +11,76 @@ This process sucks. How about we **keep commands where it belongs to** -- termin
 - Add your smart solutions back right from terminal
 - Leverage the community power such as commandlinefu.com
 
-There comes `ask`, you could ask it for commands:
+## Install
+- `git clone` the repo
+- `npm install`
 
-    ask query random number
+## Usage
+
+### Query Command
+You can ask it for commands from remote server:
+
+    bin/ask query random number
+
     [1]: strings /dev/urandom | grep -o '[:alnum:]]' | head -n 30 | tr -d '\n'; echo
       Generate a random password 30 characters long
     [2]: Random Number Between 1 And X
       echo $[RANDOM%X+1]
 
-You could paste the commands right in the terminal: 
+You can also ask it from local server:
 
-    ask exec 2
+    bin/ask query random number --local
+  
+### Add Command
+Add new command to local storage
+
+    bin/ask add <command> --desc "it is an awesome command"
+
+(work in progress) You could share more commands right from terminal with your `$EDITOR`:
+    
+    bin/ask add
+
+### Execute Command
+
+(work in progress) You could exec the commands right in the terminal: 
+
+    bin/ask exec <command id>
     echo $[RANDOM%X+1]
 
-You could share more commands right from terminal with your `$EDITOR`:
+(word in progress) Also paste to clipboard
+
+    bin/ask copy <command id>
+
+### (work in progress) Import and Export Command
+
+    bin/ask export cmd.json
+
+    bin/ask import backup.json
+
+### More Information
+
+    bin/ask --help
+
+## For Developers
+
+### Data Structure and Model Interface
+**ask** can query command from resources stored locally or remotely, and each resource models should share the same interface:
+
+    query(string) => [data, data, ...]
+    add(data) => data
+    get(id) => data
+    update(id, data) => data
+    remove(id) => data
+
+The `data` above is the data structure is defined as:
+
+    { 
+      id: String,
+      command: String,
+      description: String,
+      private: Boolean
+    }
     
-    ask add
-
-## Details
-More useful options are:
-
-    $ ask --help
-    usage: ask [action] [options] 
-
-    actions:
-      add             open your $EDITOR, edit and submit your last command(!!).
-      exec <id>       exec the command with given id.
-      query <words>   query for commands containing the keywords.
-      copy <id>      paste in the command with given id.
-
-    options:
-      --local         query local database
-      --remote        query remote database
-      --desc          add description right from terminal
-
 ### The structure of local cache directory(First Edition)
 Like `git`, ask cab be total local. By default, all the commands will be cached in `~/.ask` direcotry.
 
@@ -60,7 +96,7 @@ The structure of `~/.ask` directory will similar to a local `.git` repository.
     `-- pack
 ``` 
 
-## RoadMap
+### RoadMap
 On version 1.0
 - develop a local storage engine
 - implement local `ask add`, `ask exec <id>`, `ask query 'grep'` 
